@@ -207,7 +207,7 @@ for ll = 1:size(deploy_notes,1)
             %% Wave statistics
             PUV_work_new.P(:,gg)=P(:,gg);
             PUV_work_new.time(:,gg)=time(:,gg);
-            %[PUV_process(gg)] = vector_wave_stats_mspec_cutoff(Uprime(:,gg), Vprime(:,gg), P(:,gg),time(:,gg), doffp, doffu);
+            %[PUV_process(gg)] = vector_wave_stats_mspec_cutoff(Uprime(:,gg), Vprime(:,gg), P(:,gg),time(:,gg), doffp, doffu, fs);
             [PUV_process(gg)] = vector_wave_stats_hanning(Uprime(:,gg), Vprime(:,gg), P(:,gg),time(:,gg), doffp, doffu, PUV_work.depth(gg));
          else
              PUV_process(gg).time = time(:,gg);
