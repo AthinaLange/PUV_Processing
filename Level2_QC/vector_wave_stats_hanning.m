@@ -1,4 +1,4 @@
-function [A] = vector_wave_stats_hanning(U,V,P,tt, doffp, doffu, depth)
+function [A] = vector_wave_stats_hanning(U,V,P,tt, doffp, doffu, depth, fs)
 % addpath jlab
 
 time = tt;
@@ -20,7 +20,7 @@ N = length(U);
 
 % U = U(1:N)'; V = V(1:N)'; P = P(1:N)';
 p = 15;
-fs = 2;  % Hz
+%fs = 2;  % Hz
 dt = 1/fs;
 
 if isrow(U)
@@ -34,15 +34,15 @@ if isrow(P)
 end
 
 % 1h segments and hanninng window
-[fm, Suu, ~, ~, ~, ~] = get_spectrum(U, 7200, 2, 0.05); fm = fm';
-[~, Svv, ~, ~, ~, ~] = get_spectrum(V, 7200, 2, 0.05);
-[~, Spp, ~, ~, ~, ~] = get_spectrum(P, 7200, 2, 0.05);
+[fm, Suu, ~, ~, ~, ~] = get_spectrum(U, fs*60*60, fs, 0.05); fm = fm';
+[~, Svv, ~, ~, ~, ~] = get_spectrum(V, fs*60*60, fs, 0.05);
+[~, Spp, ~, ~, ~, ~] = get_spectrum(P, fs*60*60, fs, 0.05);
 
 fcutoff = 0.25;
 ii = find(fm <= fcutoff);
 
-i_ig = find(fm>0.004 & fm<0.04);
-i_swell = find(fm>0.04 & fm<0.2);
+i_ig = find(fm>0.004 & fm<0.05);
+i_swell = find(fm>0.05 & fm<0.25);
 df = fm(2)-fm(1);
 
 id_low = find(min(abs(fm - 0.004))== abs(fm-0.004));
@@ -65,8 +65,8 @@ convert = zeros(size(fm));
 fcutoff = 0.25;
 
 ii = find(fm <= fcutoff);
-i_ig = find(fm>0.004 & fm<0.04);
-i_swell = find(fm>0.04 & fm<0.25);
+i_ig = find(fm>0.004 & fm<0.05);
+i_swell = find(fm>0.05 & fm<0.25);
 
 
 correction(ii) = (cosh(k(ii)*depth) ./ cosh(k(ii)*doffp)); 
@@ -102,9 +102,9 @@ SSEUU = UUpres.*(correction.^2);%sea surface elevation determined from U velocit
 % DEPTH CORRECTION -------------------------------------------------------------
 % find correction/conversion rcoefs at each f-band
 % to calc sea surface elevation and convert velocities to pressure units
-[f_co , Spu] = cospec(P, U, df, 2);
-[~ , Spv] = cospec(P, V, df, 2);
-[~ , Suv] = cospec(U, V, df, 2);
+[f_co , Spu] = cospec(P, U, df, fs);
+[~ , Spv] = cospec(P, V, df, fs);
+[~ , Suv] = cospec(U, V, df, fs);
 Spu(1:id_low) = NaN; Spv(1:id_low) = NaN; Suv(1:id_low) = NaN;
 
 
